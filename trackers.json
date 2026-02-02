@@ -49,10 +49,48 @@
           "details": "בדיקה פעמיים ביום - 10:00, 18:00"
         }
       ]
+    },
+    {
+      "id": "talk-ai-platform",
+      "title": "TALK - השקת פלטפורמת AI",
+      "emoji": "🧠",
+      "status": "active",
+      "description": "מעקב אחרי Talkspace (TALK) והשקת פלטפורמת ה-AI לבריאות הנפש. צפויה להשיק במחצית הראשונה של 2026. רכשו את Wisdo Health ב-Q3 2025 לחיזוק היכולות",
+      "requestedBy": "אלעד (Robb)",
+      "requestedAt": "2026-02-02T15:32:00Z",
+      "config": {
+        "schedule": "0 10,18 * * *",
+        "scheduleHuman": "פעמיים ביום - 10:00, 18:00 (שעון ישראל)",
+        "method": "חיפוש חדשות באינטרנט (web fetch / דפדפן)",
+        "keywords": ["Talkspace AI platform launch", "TALK AI mental health", "Talkspace Wisdo Health AI 2026"],
+        "reportTarget": "קבוצת WhatsApp",
+        "reportPolicy": "רק אם יש חדש - דיווח בעברית",
+        "cronJobId": "c25a18e0-2488-4537-9385-28e37f7c4dea"
+      },
+      "knownSources": [
+        {
+          "title": "Why Talkspace (TALK) Is Up 17.0% After Strong Q3 Results and Wisdo Health Acquisition",
+          "source": "Simply Wall St / Sahm Capital",
+          "date": "2025-11-02",
+          "url": "https://www.sahmcapital.com/news/content/why-talkspace-talk-is-up-170-after-strong-q3-results-and-wisdo-health-acquisition-2025-11-02"
+        }
+      ],
+      "history": [
+        {
+          "date": "2026-02-02T15:32:00Z",
+          "event": "משימה נוצרה",
+          "details": "אלעד ביקש לעקוב אחרי מועד השקת פלטפורמת ה-AI של Talkspace"
+        },
+        {
+          "date": "2026-02-02T15:32:00Z",
+          "event": "Cron job הוגדר",
+          "details": "בדיקה פעמיים ביום - 10:00, 18:00"
+        }
+      ]
     }
   ],
   "meta": {
-    "lastUpdated": "2026-02-02T15:05:00Z",
+    "lastUpdated": "2026-02-02T15:32:00Z",
     "version": "1.0"
   }
 }
