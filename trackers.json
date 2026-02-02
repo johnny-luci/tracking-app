@@ -1,0 +1,58 @@
+{
+  "trackers": [
+    {
+      "id": "hood-trump-accounts",
+      "title": "HOOD + Trump Accounts לילדים",
+      "emoji": "🏦",
+      "status": "active",
+      "description": "מעקב אחרי חדשות על Robinhood (HOOD) ותכנית Trump Accounts - חשבונות חיסכון לילדים בארה\"ב, בדומה לתכנית 'חיסכון לכל ילד' בישראל",
+      "requestedBy": "אלעד (Robb)",
+      "requestedAt": "2026-02-02T14:55:00Z",
+      "config": {
+        "schedule": "0 10,18 * * *",
+        "scheduleHuman": "פעמיים ביום - 10:00, 18:00 (שעון ישראל)",
+        "method": "חיפוש חדשות באינטרנט (web fetch / דפדפן)",
+        "keywords": ["robinhood trump accounts children", "HOOD trump kids savings", "trump accounts robinhood update"],
+        "reportTarget": "קבוצת WhatsApp",
+        "reportPolicy": "רק אם יש חדש - דיווח בעברית",
+        "cronJobId": "5cb14212-4f9a-41aa-9bf7-a0960d7ad741"
+      },
+      "knownSources": [
+        {
+          "title": "US Weighs Tapping Robinhood for Trump Accounts for Children",
+          "source": "Bloomberg",
+          "date": "2026-01-29",
+          "url": "https://www.bloomberg.com/news/articles/2026-01-29/us-weighs-tapping-robinhood-for-trump-accounts-for-children"
+        },
+        {
+          "title": "US Mulls Tapping Robinhood for Trump Accounts for Kids",
+          "source": "Reuters / US News",
+          "date": "2026-01-29",
+          "url": "https://money.usnews.com/investing/news/articles/2026-01-29/us-mulls-tapping-robinhood-for-trump-accounts-for-kids-bloomberg-news-reports"
+        },
+        {
+          "title": "Trump May Tap Robinhood To Manage Pre-401K Initiative",
+          "source": "Investors.com",
+          "date": "2026-01-30",
+          "url": "https://www.investors.com/news/trump-accounts-kids-childrens-savings-accounts-robinhood-visa-contributions-banks/"
+        }
+      ],
+      "history": [
+        {
+          "date": "2026-02-02T14:55:00Z",
+          "event": "משימה נוצרה",
+          "details": "אלעד ביקש לעקוב אחרי HOOD + חשבון לכל ילד"
+        },
+        {
+          "date": "2026-02-02T14:58:00Z",
+          "event": "Cron job הוגדר",
+          "details": "בדיקה פעמיים ביום - 10:00, 18:00"
+        }
+      ]
+    }
+  ],
+  "meta": {
+    "lastUpdated": "2026-02-02T15:05:00Z",
+    "version": "1.0"
+  }
+}

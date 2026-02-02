@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📡 Tracking Dashboard - Johnny Luci</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #172554 100%);
+            min-height: 100vh;
+            color: #e2e8f0;
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255,255,255,0.04);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-weight: 600;
+        }
+
+        .header-info {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #22c55e;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Main layout */
+        .main {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Stats bar */
+        .stats-bar {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            flex: 1;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-card .label {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-active .number { color: #22c55e; }
+        .stat-paused .number { color: #f59e0b; }
+        .stat-total .number { color: #60a5fa; }
+
+        /* Tracker cards */
+        .tracker-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .tracker-card:hover {
+            border-color: rgba(99,102,241,0.4);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+
+        .tracker-header {
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            cursor: pointer;
+        }
+
+        .tracker-title-area {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        .tracker-emoji {
+            font-size: 2rem;
+            min-width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.06);
+            border-radius: 12px;
+        }
+
+        .tracker-title h2 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        .tracker-desc {
+            color: #94a3b8;
+            font-size: 0.88rem;
+            line-height: 1.5;
+        }
+
+        .tracker-status {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.35rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .status-active {
+            background: rgba(34,197,94,0.15);
+            color: #4ade80;
+            border: 1px solid rgba(34,197,94,0.3);
+        }
+
+        .status-paused {
+            background: rgba(245,158,11,0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(245,158,11,0.3);
+        }
+
+        .status-completed {
+            background: rgba(99,102,241,0.15);
+            color: #a5b4fc;
+            border: 1px solid rgba(99,102,241,0.3);
+        }
+
+        /* Tracker details (collapsible) */
+        .tracker-details {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .tracker-details.open {
+            max-height: 2000px;
+        }
+
+        .tracker-body {
+            padding: 0 1.5rem 1.5rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+        }
+
+        /* Config grid */
+        .config-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1.2rem 0;
+        }
+
+        .config-item {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 10px;
+            padding: 0.9rem;
+        }
+
+        .config-label {
+            font-size: 0.72rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 0.4rem;
+        }
+
+        .config-value {
+            font-size: 0.92rem;
+            color: #e2e8f0;
+        }
+
+        /* Keywords */
+        .keywords {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 0.3rem;
+        }
+
+        .keyword-tag {
+            background: rgba(99,102,241,0.2);
+            color: #a5b4fc;
+            padding: 0.2rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-family: 'SF Mono', Consolas, monospace;
+            direction: ltr;
+        }
+
+        /* Sources section */
+        .section-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #94a3b8;
+            margin: 1.2rem 0 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .source-list {
+            list-style: none;
+        }
+
+        .source-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.7rem 0.9rem;
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            margin-bottom: 0.4rem;
+            border: 1px solid rgba(255,255,255,0.04);
+            transition: background 0.2s;
+        }
+
+        .source-item:hover {
+            background: rgba(255,255,255,0.06);
+        }
+
+        .source-info {
+            flex: 1;
+        }
+
+        .source-title {
+            font-size: 0.88rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .source-title a {
+            color: #93c5fd;
+            text-decoration: none;
+        }
+
+        .source-title a:hover {
+            text-decoration: underline;
+        }
+
+        .source-meta {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .source-badge {
+            background: rgba(255,255,255,0.06);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            color: #94a3b8;
+        }
+
+        /* History / Timeline */
+        .timeline {
+            position: relative;
+            padding-right: 1.5rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 0.6rem 1.2rem 0.6rem 0;
+            margin-bottom: 0.3rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            right: -1.75rem;
+            top: 0.85rem;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #6366f1;
+            border: 2px solid #1e1b4b;
+        }
+
+        .timeline-date {
+            font-size: 0.72rem;
+            color: #64748b;
+            margin-bottom: 0.15rem;
+        }
+
+        .timeline-event {
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .timeline-details {
+            font-size: 0.78rem;
+            color: #94a3b8;
+        }
+
+        /* Meta footer */
+        .tracker-meta {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem 1.5rem;
+            background: rgba(255,255,255,0.02);
+            font-size: 0.75rem;
+            color: #64748b;
+            border-top: 1px solid rgba(255,255,255,0.04);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main { padding: 1rem; }
+            .stats-bar { flex-direction: column; gap: 0.5rem; }
+            .config-grid { grid-template-columns: 1fr; }
+            .header { flex-direction: column; gap: 0.5rem; }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #64748b;
+        }
+
+        .empty-state .emoji { font-size: 3rem; margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+
+<header class="header">
+    <h1>📡 Tracking Dashboard</h1>
+    <div class="header-info">
+        <div class="status-badge">
+            <div class="status-dot"></div>
+            <span>מערכת פעילה</span>
+        </div>
+        <span id="lastUpdated">עודכן: --</span>
+    </div>
+</header>
+
+<main class="main">
+    <div class="stats-bar">
+        <div class="stat-card stat-active">
+            <div class="number" id="activeCount">0</div>
+            <div class="label">פעילים</div>
+        </div>
+        <div class="stat-card stat-paused">
+            <div class="number" id="pausedCount">0</div>
+            <div class="label">מושהים</div>
+        </div>
+        <div class="stat-card stat-total">
+            <div class="number" id="totalChecks">0</div>
+            <div class="label">בדיקות ביום</div>
+        </div>
+    </div>
+
+    <div id="trackersList"></div>
+</main>
+
+<script>
+let trackers = [];
+
+async function loadData() {
+    try {
+        const res = await fetch('trackers.json');
+        const data = await res.json();
+        trackers = data.trackers || [];
+        render(data.meta);
+    } catch(e) {
+        console.error('Failed to load trackers:', e);
+        document.getElementById('trackersList').innerHTML = `
+            <div class="empty-state">
+                <div class="emoji">📭</div>
+                <p>לא הצלחתי לטעון את הנתונים</p>
+            </div>
+        `;
+    }
+}
+
+function render(meta) {
+    updateStats();
+    renderTrackers();
+    if (meta?.lastUpdated) {
+        document.getElementById('lastUpdated').textContent = 
+            'עודכן: ' + new Date(meta.lastUpdated).toLocaleString('he-IL');
+    }
+}
+
+function updateStats() {
+    const active = trackers.filter(t => t.status === 'active').length;
+    const paused = trackers.filter(t => t.status === 'paused').length;
+    
+    // Count daily checks from cron expressions
+    let dailyChecks = 0;
+    trackers.forEach(t => {
+        if (t.status === 'active' && t.config?.schedule) {
+            const parts = t.config.schedule.split(' ');
+            if (parts.length >= 5) {
+                const hours = parts[1];
+                if (hours.includes(',')) {
+                    dailyChecks += hours.split(',').length;
+                } else if (hours === '*') {
+                    dailyChecks += 24;
+                } else {
+                    dailyChecks += 1;
+                }
+            }
+        }
+    });
+
+    document.getElementById('activeCount').textContent = active;
+    document.getElementById('pausedCount').textContent = paused;
+    document.getElementById('totalChecks').textContent = dailyChecks;
+}
+
+function renderTrackers() {
+    const container = document.getElementById('trackersList');
+    
+    if (trackers.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="emoji">📭</div>
+                <p>אין משימות מעקב עדיין</p>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = trackers.map(t => renderTracker(t)).join('');
+
+    // Attach toggle listeners
+    document.querySelectorAll('.tracker-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const details = header.nextElementSibling;
+            details.classList.toggle('open');
+        });
+    });
+}
+
+function renderTracker(t) {
+    const statusClass = `status-${t.status}`;
+    const statusLabel = { active: '🟢 פעיל', paused: '⏸️ מושהה', completed: '✅ הושלם' }[t.status] || t.status;
+
+    const configItems = [
+        { label: 'תדירות', value: t.config?.scheduleHuman || t.config?.schedule || '-' },
+        { label: 'שיטת חיפוש', value: t.config?.method || '-' },
+        { label: 'יעד דיווח', value: t.config?.reportTarget || '-' },
+        { label: 'מדיניות דיווח', value: t.config?.reportPolicy || '-' }
+    ];
+
+    const keywords = (t.config?.keywords || []).map(k => 
+        `<span class="keyword-tag">${k}</span>`
+    ).join('');
+
+    const sources = (t.knownSources || []).map(s => `
+        <li class="source-item">
+            <div class="source-info">
+                <div class="source-title"><a href="${s.url}" target="_blank">${s.title}</a></div>
+                <div class="source-meta">${s.source} · ${formatDate(s.date)}</div>
+            </div>
+            <span class="source-badge">ידוע</span>
+        </li>
+    `).join('');
+
+    const timeline = (t.history || []).reverse().map(h => `
+        <div class="timeline-item">
+            <div class="timeline-date">${formatDateTime(h.date)}</div>
+            <div class="timeline-event">${h.event}</div>
+            ${h.details ? `<div class="timeline-details">${h.details}</div>` : ''}
+        </div>
+    `).join('');
+
+    return `
+        <div class="tracker-card">
+            <div class="tracker-header">
+                <div class="tracker-title-area">
+                    <div class="tracker-emoji">${t.emoji || '📡'}</div>
+                    <div class="tracker-title">
+                        <h2>${t.title}</h2>
+                        <div class="tracker-desc">${t.description}</div>
+                    </div>
+                </div>
+                <span class="tracker-status ${statusClass}">${statusLabel}</span>
+            </div>
+            
+            <div class="tracker-details">
+                <div class="tracker-body">
+                    <div class="config-grid">
+                        ${configItems.map(c => `
+                            <div class="config-item">
+                                <div class="config-label">${c.label}</div>
+                                <div class="config-value">${c.value}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    ${keywords ? `
+                        <div class="section-title">🔍 מילות חיפוש</div>
+                        <div class="keywords">${keywords}</div>
+                    ` : ''}
+
+                    ${sources ? `
+                        <div class="section-title">📰 מקורות ידועים (${t.knownSources?.length || 0})</div>
+                        <ul class="source-list">${sources}</ul>
+                    ` : ''}
+
+                    ${timeline ? `
+                        <div class="section-title">📜 היסטוריה</div>
+                        <div class="timeline">${timeline}</div>
+                    ` : ''}
+                </div>
+
+                <div class="tracker-meta">
+                    <span>ביקש: ${t.requestedBy || '-'}</span>
+                    <span>נוצר: ${formatDate(t.requestedAt)}</span>
+                    <span>Cron: <code>${t.config?.cronJobId?.slice(0, 8) || '-'}...</code></span>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+function formatDate(dateStr) {
+    if (!dateStr) return '-';
+    return new Date(dateStr).toLocaleDateString('he-IL');
+}
+
+function formatDateTime(dateStr) {
+    if (!dateStr) return '-';
+    return new Date(dateStr).toLocaleString('he-IL', {
+        day: '2-digit', month: '2-digit', year: 'numeric',
+        hour: '2-digit', minute: '2-digit'
+    });
+}
+
+loadData();
+</script>
+</body>
+</html>
